@@ -39,6 +39,8 @@ export const action: ActionFunction = async ({ request, params }) => {
 };
 import { Form, redirect, useLoaderData } from "react-router";
 import { getDB } from "~/db/getDB";
+import { useState, useEffect } from "react";
+
 export async function loader() {
   const db = await getDB();
   // get timesheetId from params
@@ -58,6 +60,25 @@ export default function TimesheetPage() {
   // Extract time part for form fields
   const startTime = timesheet.start_time?.split(" ")[1] || "";
   const endTime = timesheet.end_time?.split(" ")[1] || "";
+  
+  const [workDate, setWorkDate] = useState(timesheet.work_date || "");
+  const [startTimeValue, setStartTimeValue] = useState(startTime);
+  const [endTimeValue, setEndTimeValue] = useState(endTime);
+  const [hoursWorked, setHoursWorked] = useState(timesheet.hours_worked || 0);
+
+  // Calculate hours worked whenever times change
+  useEffect(() => {
+    if (workDate && startTimeValue && endTimeValue) {
+      const startDateTime = new Date(`${workDate} ${startTimeValue}`);
+      const endDateTime = new Date(`${workDate} ${endTimeValue}`);
+      
+      if (endDateTime > startDateTime) {
+        const diffMs = endDateTime.getTime() - startDateTime.getTime();
+        const diffHours = diffMs / (1000 * 60 * 60);
+        setHoursWorked(Number(diffHours.toFixed(2)));
+      }
+    }
+  }, [workDate, startTimeValue, endTimeValue]);
   return (
     <div>
       {error && (
@@ -68,19 +89,52 @@ export default function TimesheetPage() {
         <Form method="post" className="space-y-4">
           <div>
             <label htmlFor="work_date" className="block text-sm font-medium mb-1">Work Date</label>
-            <input type="date" name="work_date" id="work_date" required className="w-full border px-3 py-2 rounded" defaultValue={timesheet.work_date} />
+            <input 
+              type="date" 
+              name="work_date" 
+              id="work_date" 
+              required 
+              className="w-full border px-3 py-2 rounded" 
+              value={workDate}
+              onChange={(e) => setWorkDate(e.target.value)}
+            />
           </div>
           <div>
             <label htmlFor="start_time" className="block text-sm font-medium mb-1">Start Time</label>
-            <input type="time" name="start_time" id="start_time" required className="w-full border px-3 py-2 rounded" defaultValue={startTime} />
+            <input 
+              type="time" 
+              name="start_time" 
+              id="start_time" 
+              required 
+              className="w-full border px-3 py-2 rounded" 
+              value={startTimeValue}
+              onChange={(e) => setStartTimeValue(e.target.value)}
+            />
           </div>
           <div>
             <label htmlFor="end_time" className="block text-sm font-medium mb-1">End Time</label>
-            <input type="time" name="end_time" id="end_time" required className="w-full border px-3 py-2 rounded" defaultValue={endTime} />
+            <input 
+              type="time" 
+              name="end_time" 
+              id="end_time" 
+              required 
+              className="w-full border px-3 py-2 rounded" 
+              value={endTimeValue}
+              onChange={(e) => setEndTimeValue(e.target.value)}
+            />
           </div>
           <div>
             <label htmlFor="hours_worked" className="block text-sm font-medium mb-1">Hours Worked</label>
-            <input type="number" step="0.01" name="hours_worked" id="hours_worked" required className="w-full border px-3 py-2 rounded" defaultValue={timesheet.hours_worked} />
+            <input 
+              type="number" 
+              step="0.01" 
+              name="hours_worked" 
+              id="hours_worked" 
+              required 
+              className="w-full border px-3 py-2 rounded bg-gray-100" 
+              value={hoursWorked}
+              readOnly
+            />
           </div>
           <div>
             <label htmlFor="notes" className="block text-sm font-medium mb-1">Notes</label>

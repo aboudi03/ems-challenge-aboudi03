@@ -26,7 +26,12 @@ export const action = async ({ request, params }: any) => {
     // Set employee as inactive with reason
     const reason = formData.get("inactivity_reason") || ""
     await dbAction.run(`UPDATE employees SET inactive = 1, inactivity_reason = ? WHERE id = ?`, [reason, employeeIdAction])
-    return redirect(`/employees`)
+    return redirect(`/employees/${employeeIdAction}`)
+  }
+  if (actionType === "active") {
+    // Set employee as active
+    await dbAction.run(`UPDATE employees SET inactive = 0, inactivity_reason = NULL WHERE id = ?`, [employeeIdAction])
+    return redirect(`/employees/${employeeIdAction}`)
   }
   if (actionType === "editProfession") {
     // Edit professional info
@@ -459,12 +464,24 @@ export default function EmployeePage() {
                 >
                   {editMode ? "Cancel Edit" : "Edit"}
                 </button>
-                <button
-                  className="px-6 py-3 bg-red-600 text-white font-light rounded-sm border border-red-700 uppercase tracking-wider text-sm ml-2"
-                  onClick={() => setShowInactiveForm((v) => !v)}
-                >
-                  {showInactiveForm ? "Cancel" : "Set Inactive"}
-                </button>
+                {employee.inactive ? (
+                  <Form method="post" className="inline">
+                    <input type="hidden" name="actionType" value="active" />
+                    <button
+                      type="submit"
+                      className="px-6 py-3 bg-green-600 text-white font-light rounded-sm border border-green-700 uppercase tracking-wider text-sm ml-2 hover:bg-green-700 transition-all duration-200"
+                    >
+                      Set as Active
+                    </button>
+                  </Form>
+                ) : (
+                  <button
+                    className="px-6 py-3 bg-red-600 text-white font-light rounded-sm border border-red-700 uppercase tracking-wider text-sm ml-2"
+                    onClick={() => setShowInactiveForm((v) => !v)}
+                  >
+                    {showInactiveForm ? "Cancel" : "Set Inactive"}
+                  </button>
+                )}
               </div>
 
               {/* Edit form */}
