@@ -14,13 +14,18 @@
     "@react-router/fs-routes": "^7.1.5",
     "@react-router/node": "^7.1.5",
     "@react-router/serve": "^7.1.5",
+    "@schedule-x/calendar": "^3.3.0",
+    "@schedule-x/events-service": "^3.3.0",
+    "@schedule-x/react": "^3.3.0",
+    "@schedule-x/theme-default": "^3.3.0",
     "isbot": "^5.1.17",
     "js-yaml": "^4.1.0",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
     "react-router": "^7.1.5",
     "sqlite": "^5.1.1",
-    "sqlite3": "^5.1.7"
+    "sqlite3": "^5.1.7",
+    "temporal-polyfill": "^0.3.0"
   },
   "devDependencies": {
     "@react-router/dev": "^7.1.5",
