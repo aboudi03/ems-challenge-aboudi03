@@ -7,3 +7,5 @@
 
 # Database
 *.sqlite
+
+public/uploads/

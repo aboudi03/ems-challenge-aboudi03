@@ -230,7 +230,7 @@ export default function NewEmployeePage() {
         {/* Compliance Status Panel */}
         {!complianceResult.isCompliant && (
           <div className="mb-6 bg-white border border-gray-400 rounded-sm p-6">
-            <h3 className="text-sm font-medium text-black mb-4 uppercase tracking-wider">Compliance Issues</h3>
+            <h3 className="text-sm font-medium text-black mb-4 uppercase tracking-wider">Warning</h3>
             <div className="space-y-4">
               {complianceResult.issues
                 .filter((issue) => !issue.isCompliant)
